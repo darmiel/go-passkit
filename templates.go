@@ -52,17 +52,7 @@ func (f *FolderPassTemplate) ProvisionPassAtDirectory(tmpDirPath string) error {
 }
 
 func (f *FolderPassTemplate) GetAllFiles() (map[string][]byte, error) {
-	loaded, err := loadDir(f.templateDir)
-	if err != nil {
-		return nil, err
-	}
-
-	ret := make(map[string][]byte)
-	for name, data := range loaded {
-		ret[filepath.Base(name)] = data
-	}
-
-	return ret, err
+	return loadDir(f.templateDir)
 }
 
 type InMemoryPassTemplate struct {
@@ -159,7 +149,7 @@ func (m *InMemoryPassTemplate) AddAllFiles(directoryWithFilesToAdd string) error
 	}
 
 	for name, data := range loaded {
-		m.files[filepath.Base(name)] = data
+		m.files[name] = data
 	}
 
 	return nil

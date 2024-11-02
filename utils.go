@@ -131,13 +131,17 @@ func loadDir(src string) (files map[string][]byte, err error) {
 		return nil, err
 	}
 
+	files = make(map[string][]byte)
 	for _, entry := range entries {
 		srcPath := filepath.Join(src, entry.Name())
 
 		if entry.IsDir() {
-			files, err = loadDir(srcPath)
+			subFiles, err := loadDir(srcPath)
 			if err != nil {
 				return nil, err
+			}
+			for k, v := range subFiles {
+				files[filepath.Join(entry.Name(), k)] = v
 			}
 		} else {
 			// Skip symlinks.
@@ -150,11 +154,7 @@ func loadDir(src string) (files map[string][]byte, err error) {
 				return nil, err
 			}
 
-			if files == nil {
-				files = make(map[string][]byte)
-			}
-
-			files[srcPath] = f
+			files[entry.Name()] = f
 		}
 	}
 
